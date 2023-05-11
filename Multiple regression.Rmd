@@ -1,0 +1,189 @@
+---
+title: "Multiple regression"
+author: "Robin Aldridge-Sutton"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Simple linear regression
+
+```{r}
+# Sample size
+n = 1000
+
+# Continuous predictor
+x1 = rnorm(n)
+
+# Continuous outcome
+y = 2 * x1 + rnorm(n)
+
+# Simple linear regression model
+slrm = lm(y ~ x1)
+
+# Plot model fit
+plot(x1, y)
+abline(coef = coef(slrm), col = 2)
+```
+
+```{r}
+# Model summary
+summary(slrm)
+```
+- Residuals evenly spread around zero.
+- Estimated intercept and coefficient close to true values.
+- Standard errors and t values?
+- P-value for coefficient indicates highly statistically significant.
+- Residual standard error close to true value.
+- Degrees of freedom is n - (p + 1), sample size minus two values estimated, intercept and coefficient  
+- Multiple indicates model explains most variability in outcome.
+- Adjusted R^2 indicates variability explained is not by chance.
+- P-value for F-statistic indicates model highly statistically significant. 
+- Degrees of freedom for F-statistic?
+
+# Simple linear regression with missing binary predictor
+
+```{r}
+# Binary predictor
+x2 = rbinom(n, 1, 0.5)
+
+# Continuous outcome
+y = 2 * x1 + 2 * x2 + rnorm(n)
+
+# Simple linear regression model
+slrm = lm(y ~ x1)
+
+# Plot model fit
+plot(x1, y)
+abline(coef = coef(slrm), col = 2)
+```
+
+```{r}
+# Model summary
+summary(slrm)
+```
+- Residual standard error increased
+- Multiple and adjusted R^2 reduced
+
+# Multiple linear regression including missing predictor
+
+```{r}
+# Multiple linear regression model
+mlrm = lm(y ~ x1 + x2)
+
+# Plot model fit
+b_hat = coef(mlrm)
+plot(x1, y, col = x2 + 1)
+abline(b_hat[1], b_hat[2], col = 1)
+abline(b_hat[1] + b_hat[3], b_hat[2], col = 2)
+```
+
+```{r}
+summary(mlrm)
+```
+- Residual standard error corrected
+- Multiple and adjusted R^2 increased
+- 997 degrees of freedom because extra coefficient estimated
+
+# Simple linear regression with binary confounding variable
+
+```{r}
+# Continuous predictor affected by binary confounder
+x1 = rnorm(n) + 2 * x2
+
+# Continuous outcome affected by confounder
+y = x1 + 10 * x2 + rnorm(n)
+
+# Simple linear regression model excludes confounder
+slrm = lm(y ~ x1)
+
+# Plot model fit
+plot(x1, y)
+abline(coef = coef(slrm), col = 2)
+```
+```{r}
+summary(slrm)
+```
+- Estimated intercept and coefficient shifted from true values
+- RSE increased
+- MR^2 and AR^2 reduced
+
+# Multiple linear regression including confounding variable
+
+```{r}
+# Multiple linear regression model
+mlrm = lm(y ~ x1 + x2)
+
+# Plot model fit
+b_hat = coef(mlrm)
+plot(x1, y, col = x2 + 1)
+abline(b_hat[1], b_hat[2], col = 1)
+abline(b_hat[1] + b_hat[3], b_hat[2], col = 2)
+```
+```{r}
+summary(mlrm)
+```
+- Estimated intercept and coefficient corrected
+- RSE corrected
+- MR^2 and AR^2 increased
+- 997 degrees of freedom because extra coefficient estimated
+
+# Simple linear regression with missing effect modifier
+
+```{r}
+# Continuous predictor
+x1 = rnorm(n)
+
+# Continuous outcome with binary effect modifier
+y = x1 + 2 * x2 + 5 * x1 * x2 + rnorm(n)
+
+# Simple linear regression model
+slrm = lm(y ~ x1)
+
+# Plot model fit
+plot(x1, y)
+abline(coef = coef(slrm), col = 2)
+```
+```{r}
+# Model summary
+summary(slrm)
+```
+- ...
+
+# Multiple linear regression with missing effect modifier
+
+```{r}
+# Multiple linear regression model
+mlrm = lm(y ~ x1 + x2)
+
+# Plot model fit
+b_hat = coef(mlrm)
+plot(x1, y, col = x2 + 1)
+abline(b_hat[1], b_hat[2], col = 1)
+abline(b_hat[1] + b_hat[3], b_hat[2], col = 2)
+```
+```{r}
+summary(mlrm)
+```
+- ...
+
+# Multiple linear regression including effect modifier
+
+```{r}
+# Multiple linear regression model
+mlrm = lm(y ~ x1 + x2 + x1 * x2)
+
+# Plot model fit
+b_hat = coef(mlrm)
+plot(x1, y, col = x2 + 1)
+abline(b_hat[1], b_hat[2], col = 1)
+abline(b_hat[1] + b_hat[3], b_hat[2] + b_hat[4], col = 2)
+```
+```{r}
+summary(mlrm)
+```
+- ...
+
